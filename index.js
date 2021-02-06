@@ -5,6 +5,7 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const Blog = require('./models/blog')
+const logger = require('./utils/logger')
 
 const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
@@ -32,5 +33,5 @@ app.post('/api/blogs', (req, res) => {
 
 const PORT = config.PORT
 app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`)
+  logger.info(`server running on port ${PORT}`)
 })
