@@ -63,3 +63,17 @@ describe('author with the most blogs', () => {
     expect(listHelper.mostBlogs(emptyList)).toBe(null)
   })
 })
+
+describe('author with the most likes', () => {
+  test('of an empty list is null', () => {
+    expect(listHelper.mostLikes([])).toBe(null)
+  })
+
+  test('of a list with one blog to be the author of the blog', () => {
+    expect(listHelper.mostLikes(oneItemList)).toEqual({author: 'Edsger W. Dijkstra', likes: 5})
+  })
+
+  test('of a long list to be the one with the largest sum of likes', () => {
+    expect(listHelper.mostLikes(longList)).toEqual({author: 'Edsger W. Dijkstra', likes: 17})
+  })
+})

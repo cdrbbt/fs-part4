@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const logger = require('./logger')
 
 const dummy = (blogs) => {
   return 1
@@ -13,7 +14,7 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-  const reducer = (favorite, item, key) => {
+  const reducer = (favorite, item) => {
     return favorite.likes < item.likes
       ? item
       : favorite
@@ -30,9 +31,32 @@ const mostBlogs = (blogs) => {
   return _.maxBy(fomattedBlogData, data => data.blogs)
 }
 
+const mostLikes = (blogs) => {
+
+  if (blogs.length === 0) return null
+
+  const groupedBlogs = _.groupBy(blogs, blog => blog.author)
+  logger.info('grouped ', groupedBlogs)
+
+
+  const mapper = (blogList, key) => {
+    const red = (res, val) => {
+      return res + val.likes
+    }
+    const likes = _.reduce(blogList, red, 0)
+    return {author: key, likes}
+  } 
+
+  const authorLikes = _.map(groupedBlogs, mapper)
+  logger.info('likes per author', authorLikes)
+
+  return _.maxBy(authorLikes, data => data.likes)
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
