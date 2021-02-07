@@ -46,6 +46,20 @@ describe('favorite blog', () => {
   })
 
   test('of an emty list is null', () => {
-    expect(listHelper.favoriteBlog([])).toEqual(null)
+    expect(listHelper.favoriteBlog([])).toBe(null)
+  })
+})
+
+describe('author with the most blogs', () => {
+  test('of a list with one author is that author', () => {
+    expect(listHelper.mostBlogs(oneItemList)).toEqual({author: 'Edsger W. Dijkstra', blogs: 1})
+  })
+
+  test('of a list with many blogs is the one of the authors who has the most blogs',  () => {
+    expect(listHelper.mostBlogs(longList)).toEqual({author: 'Robert C. Martin', blogs: 3})
+  })
+
+  test('of an empty list to be null', () => {
+    expect(listHelper.mostBlogs(emptyList)).toBe(null)
   })
 })
