@@ -31,47 +31,77 @@ test('blogs have an id field', async() => {
   }
 })
 
-test('creating a new blog', async() => {
-  const newBlog = {
-    title: 'How to test the create function of a server',
-    author: 'Egor B.',
-    url: 'http://localhost/1',
-    likes: 0
-  }
+describe('Blog creation', () => {
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-type', /application\/json/)
+  test('creating a new blog', async() => {
+    const newBlog = {
+      title: 'How to test the create function of a server',
+      author: 'Egor B.',
+      url: 'http://localhost/1',
+      likes: 0
+    }
 
-  const blogsAfterOperation = await helper.blogsInDB()
-  expect(blogsAfterOperation).toHaveLength(helper.intialBlogs.length + 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-type', /application\/json/)
 
-  expect(blogsAfterOperation.map(b => b.title)).toContain('How to test the create function of a server')
+    const blogsAfterOperation = await helper.blogsInDB()
+    expect(blogsAfterOperation).toHaveLength(helper.intialBlogs.length + 1)
+
+    expect(blogsAfterOperation.map(b => b.title)).toContain('How to test the create function of a server')
   
-  // expect(blogsAfterOperation).toMatchObject(newBlog)
+    // expect(blogsAfterOperation).toMatchObject(newBlog)
 
+  })
+
+  test('creating a blog without likes will default the value to 0', async () => {
+    const newBlog = {
+      title: 'Testing if sending a request without a field will crash the server, part1',
+      author: 'Egor B.',
+      url: 'http://localhost/2'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-type', /application\/json/)
+
+    // will break if blogs arent returned in order
+    const blogsAfterOperation = await helper.blogsInDB()
+    const lastBlog = blogsAfterOperation[blogsAfterOperation.length-1]
+    expect(lastBlog.likes).toBe(0)
+  })
+
+  test('creating a blog without a title will return code 400', async () => {
+    const newBlog = {
+      author: 'Egor B.',
+      url: 'http://localhost/2',
+      likes: 0
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+
+
+  test('creating a blog without an url will return code 400', async () => {
+    const newBlog = {
+      author: 'Egor B.',
+      title: 'urless blog',
+      likes: 0
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
 })
 
-test('creating a blog without likes will default the value to 0', async () => {
-  const newBlog = {
-    title: 'Testing if sending a request without a field will crash the server, part1',
-    author: 'Egor B.',
-    url: 'http://localhost/2'
-  }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-type', /application\/json/)
-
-  // will break if blogs arent returned in order
-  const blogsAfterOperation = await helper.blogsInDB()
-  const lastBlog = blogsAfterOperation[blogsAfterOperation.length-1]
-  expect(lastBlog.likes).toBe(0)
-})
 
 afterAll(() => {
   mongoose.connection.close()
