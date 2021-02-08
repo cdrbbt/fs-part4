@@ -10,7 +10,7 @@ const intialBlogs = [
 ]
 
 const blogsInDB = async () => {
-  const blogs = Blog.find()
+  const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 

@@ -8,9 +8,10 @@ const blogSchema = new mongoose.Schema({
 })
 
 blogSchema.set('toJSON', {
-  transform: (document, retunredObject) => {
-    retunredObject.id = retunredObject._id
-    delete retunredObject._id
+  transform: (document, retunrnedObject) => {
+    retunrnedObject.id = retunrnedObject._id
+    delete retunrnedObject._id
   }
 })
+
 module.exports = mongoose.model('Blog', blogSchema)
