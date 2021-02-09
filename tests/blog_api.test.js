@@ -3,11 +3,9 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
-const { map } = require('../app')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  
   for (let blog of helper.intialBlogs) {
     const blogObject = new Blog(blog)
     await blogObject.save()
