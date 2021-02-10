@@ -31,6 +31,16 @@ test('blogs have an id field', async() => {
 
 describe('Blog creation', () => {
 
+  let token
+
+  //hardcoded user, the user test adds users directly to db without hashing passwords so loggging in with helper credentials doesnt work
+  beforeAll( async () => {
+    const res = await api.post('/api/login').send({username: 'sjack', password:'ladle'})
+    console.log('res', res.body)
+    token = 'Bearer ' + res.body.token
+    console.log(token)
+  })
+
   test('creating a new blog', async() => {
     const newBlog = {
       title: 'How to test the create function of a server',
@@ -41,6 +51,7 @@ describe('Blog creation', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-type', /application\/json/)
@@ -63,6 +74,7 @@ describe('Blog creation', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-type', /application\/json/)
@@ -81,6 +93,7 @@ describe('Blog creation', () => {
     }
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(400)
   })
@@ -94,8 +107,26 @@ describe('Blog creation', () => {
     }
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(400)
+  })
+
+  test('trying to create a blog without an auth token will fail with code 401', async () => {
+    const newBlog = {
+      title: 'How to test the create function of a server',
+      author: 'Egor B.',
+      url: 'http://localhost/1',
+      likes: 0
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
+    const blogsAfterOperation = await helper.blogsInDB()
+    expect(blogsAfterOperation).toHaveLength(helper.intialBlogs.length)
   })
 })
 
