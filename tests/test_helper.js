@@ -11,9 +11,9 @@ const intialBlogs = [
 ]
 
 const initalUsers = [
-  {user: 'phos', username: 'phos', password: '12345'},
-  {user: 'alexander', username: 'alex', password: '#FF1222'},
-  {user: 'cinnabar', username: 'cinn', password: 'soap'}
+  {name: 'phos', username: 'phos', password: '12345'},
+  {name: 'alexander', username: 'alex', password: '#FF1222'},
+  {name: 'cinnabar', username: 'cinn', password: 'soap'}
 ]
 
 const usersInDB = async () => {

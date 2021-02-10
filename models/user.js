@@ -9,7 +9,11 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true
   },
-  passwordHash: String
+  passwordHash: String,
+  blogs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Blog'
+  }]
 })
 
 userSchema.set('toJSON', {
@@ -23,4 +27,4 @@ userSchema.set('toJSON', {
 
 userSchema.plugin(uniqueValidator)
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('User', userSchema)
