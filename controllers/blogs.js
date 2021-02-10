@@ -26,8 +26,24 @@ blogsRouter.post('/', async (req, res) => {
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
-  await Blog.findByIdAndDelete(req.params.id)
-  res.status(204).end()
+
+  const decodedToken = jwt.decode(req.token, process.env.SECRET)
+
+  if (!req.token || !decodedToken) {
+    return res.status(401).json({error: 'token missing or invalid'})
+  }
+  const user = await User.findById(decodedToken.id)
+  const blog = await Blog.findById(req.params.id)
+
+  if (blog.user.toString() === user._id.toString()){
+    await blog.delete()
+
+    // removes the reference to the deleted blog from the user, interestingly no errors have occured when not doing this
+    user.blogs = user.blogs.filter(b => b.toString() !== req.params.id)
+    await user.save()
+    return res.status(204).end()
+  }
+  return res.status(401).json({error: 'wrong user'})
 })
 
 blogsRouter.put('/:id', async (req, res) => {
